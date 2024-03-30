@@ -24,7 +24,7 @@ int mancalaResult(int flag, int seq[], int size)
     // 运行
     for (int i = 0; i < size; i++)
     {
-        int beginHole = seq[i] % 10;
+        int beginHole = seq[i] % 10 - 1;
         int beginPerson = seq[i] / 10 - 1;
 
         // 检查不符合规则操作
@@ -32,14 +32,29 @@ int mancalaResult(int flag, int seq[], int size)
         // 不该是该选手行动
         if (tmpFlag != beginPerson)
         {
-            // return tmpFlag;
+            // printf("不该是该选手行动,tmpFlag=%d,beginPerson=%d\n", tmpFlag, beginPerson);
             return 30000 + i;
         }
         // 游戏已结束
         if (isEnd(chessboard))
         {
+            // printf("游戏已结束\n");
             return 30000 + i;
         }
+
+        // printf("\n目前棋盘情况\n");
+        // for (int j = 6; j >= 0; j--)
+        // {
+        //     printf("%d ", chessboard[1][j]);
+        // }
+        // printf("\n");
+        // for (int j = 0; j <= 6; j++)
+        // {
+        //     printf("%d ", chessboard[0][j]);
+        // }
+        // printf("\n");
+
+        // printf("输入 %d\n", seq[i]);
 
         // 分配
         int numChess = chessboard[beginPerson][beginHole];
@@ -74,6 +89,18 @@ int mancalaResult(int flag, int seq[], int size)
                 tmpHole = -1;
             }
         }
+        // printf("操作后棋盘情况\n");
+        // for (int j = 6; j >= 0; j--)
+        // {
+        //     printf("%d ", chessboard[1][j]);
+        // }
+        // printf("\n");
+        // for (int j = 0; j <= 6; j++)
+        // {
+        //     printf("%d ", chessboard[0][j]);
+        // }
+        // printf("\n");
+
         // 讨论最后一个棋子的情况。
         // 假如是我方计分洞（只可能是我方）
         if (tmpHole == 6)
@@ -83,7 +110,7 @@ int mancalaResult(int flag, int seq[], int size)
         }
         else
         {
-            // printf("最后一个棋子不是我方计分洞\n");
+            // printf("最后一个棋子不是我方计分洞，换人\n");
             tmpFlag ^= 1;
             // 是己方无棋子的棋洞且对方棋洞有棋子
             if (tmpPerson == beginPerson && chessboard[tmpPerson][tmpHole] == 1 && chessboard[tmpPerson ^ 1][5 - tmpHole] != 0)
@@ -114,7 +141,6 @@ int mancalaResult(int flag, int seq[], int size)
     // 假如游戏未结束
     else
     {
-        // printf("tmpFlag=%d ", tmpFlag);
         return 20000 + chessboard[flag][6];
     }
 }
@@ -153,7 +179,7 @@ bool isEnd(int chessboard[2][7])
 
 // int main()
 // {
-//     int array[1] = {14};
-//     printf("ans = %d\n", mancalaResult(1, array, 1));
+//     int array[100] = {15, 23, 24, 11, 26, 13, 21, 23, 15, 24, 16, 23, 12, 22, 16, 12, 26, 11, 24, 21, 15, 14, 24, 15, 22, 12, 24, 13, 25, 15, 21, 14, 24, 16, 25, 13, 24, 15, 26, 12, 22, 13, 24, 11, 25, 26};
+//     printf("ans = %d\n", mancalaResult(1, array, 46));
 //     return 0;
 // }
