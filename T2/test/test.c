@@ -5,9 +5,10 @@
 int mancalaResult(int begin, int seq[], int size);
 int test_normal(int cnt);
 int test_normal_moreNotOver(int cnt);
+int test_unnormal(int cnt);
 
-int q_begin[2000],
-	q_seq[2000][100], q_size[2000], q_result[2000];
+int q_begin[10000],
+	q_seq[10000][100], q_size[10000], q_result[10000];
 
 void test_print(int cnt)
 {
@@ -31,15 +32,24 @@ void test_print(int cnt)
 int main()
 {
 	srand(time(NULL));
+	// 正常且完成
 	for (int i = 0; i < 1000; ++i)
 	{
 		test_normal(i);
 		q_result[i] = mancalaResult(q_begin[i], q_seq[i], q_size[i]);
 		test_print(i);
 	}
+	// 正常但未完成
 	for (int i = 1000; i < 2000; ++i)
 	{
 		test_normal_moreNotOver(i);
+		q_result[i] = mancalaResult(q_begin[i], q_seq[i], q_size[i]);
+		test_print(i);
+	}
+	// 大概率不正常的样例
+	for (int i = 2000; i < 3000; ++i)
+	{
+		test_unnormal(i);
 		q_result[i] = mancalaResult(q_begin[i], q_seq[i], q_size[i]);
 		test_print(i);
 	}
@@ -275,5 +285,48 @@ int test_normal_moreNotOver(int cnt)
 		q_seq[cnt][q_size[cnt]++] = (player + 1) * 10 + hole + 1;
 		player = step(player, hole, num);
 	}
+	return 0;
+}
+
+int test_unnormal(int cnt)
+{
+	int player = rand() % 2;
+	int num[2][7];
+	for (int i = 0; i < 6; ++i)
+	{
+		num[0][i] = 4;
+		num[1][i] = 4;
+	}
+	num[0][6] = 0;
+	num[1][6] = 0;
+	int seq[100];
+	int size = 0;
+	q_begin[cnt] = player + 1;
+	// 随机j个正常，j>5
+	int j = rand() % 10 + 2;
+	for (int i = 0; i < j; i++)
+	{
+		int hole = getHole(player, num);
+		q_seq[cnt][q_size[cnt]++] = (player + 1) * 10 + hole + 1;
+		player = step(player, hole, num);
+	}
+	// 加入一个随机的
+	q_seq[cnt][q_size[cnt]++] = (rand() % 2 + 1) * 10 + (rand() % 6) + 1;
+	// 加入三个不一定是上一名选手的
+	for (int i = 0; i < 2; i++)
+	{
+		int hole = getHole(player, num);
+		q_seq[cnt][q_size[cnt]++] = (player + 1) * 10 + hole + 1;
+		if (rand() % 2 == 0)
+			player = step(player, hole, num);
+	}
+	// 正常
+	for (int i = 0; i < 5; i++)
+	{
+		int hole = getHole(player, num);
+		q_seq[cnt][q_size[cnt]++] = (player + 1) * 10 + hole + 1;
+		player = step(player, hole, num);
+	}
+
 	return 0;
 }
