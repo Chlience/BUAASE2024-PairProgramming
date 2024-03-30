@@ -140,6 +140,15 @@ int mancalaResult(int begin, int seq[], int size)
 		}
 	}
 
+	// 双方棋子加入其计分洞
+	for (int i = 0; i < 6; i++)
+	{
+		num[0][6] += num[0][i];
+		num[1][6] += num[1][i];
+		num[0][i] = 0;
+		num[1][i] = 0;
+	}
+
 	if (isEnd(num))
 	{
 		return 15000 + num[begin - 1][6] - num[(begin - 1) ^ 1][6];
