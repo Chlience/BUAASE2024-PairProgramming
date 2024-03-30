@@ -41,6 +41,12 @@ int mancalaResult(int flag, int seq[], int size)
             // printf("游戏已结束\n");
             return 30000 + i;
         }
+        // 选择的地方无棋子
+        if (chessboard[beginPerson][beginHole] == 0)
+        {
+            // printf("选择的地方无棋子\n");
+            return 30000 + i;
+        }
 
         // printf("\n目前棋盘情况\n");
         // for (int j = 6; j >= 0; j--)
@@ -179,7 +185,7 @@ bool isEnd(int chessboard[2][7])
 
 // int main()
 // {
-//     int array[100] = {15, 23, 24, 11, 26, 13, 21, 23, 15, 24, 16, 23, 12, 22, 16, 12, 26, 11, 24, 21, 15, 14, 24, 15, 22, 12, 24, 13, 25, 15, 21, 14, 24, 16, 25, 13, 24, 15, 26, 12, 22, 13, 24, 11, 25, 26};
-//     printf("ans = %d\n", mancalaResult(1, array, 46));
+//     int array[100] = {26, 13, 23, 26, 24, 12, 22, 12, 13, 16, 26, 15, 24, 25, 11};
+//     printf("ans = %d\n", mancalaResult(2, array, 12));
 //     return 0;
 // }
