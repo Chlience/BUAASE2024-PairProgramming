@@ -5,6 +5,9 @@ import assert from "assert";
 // import { mancala_result as mancalaResult } from "./t2_rust/pkg/t1_rust.js"
 // [Write your own "import" for other PLs.]
 
+import { mancalaResult } from "./load.js";
+
+
 assert.strictEqual(mancalaResult(1,[11,12],2),30001);
 assert.strictEqual(mancalaResult(1,[14],1),20001);
 
