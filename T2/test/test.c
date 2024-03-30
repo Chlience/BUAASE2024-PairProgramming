@@ -4,8 +4,10 @@
 
 int mancalaResult(int begin, int seq[], int size);
 int test_normal(int cnt);
+int test_normal_moreNotOver(int cnt);
 
-int q_begin[100], q_seq[100][100], q_size[100], q_result[100];
+int q_begin[2000],
+	q_seq[2000][100], q_size[2000], q_result[2000];
 
 void test_print(int cnt)
 {
@@ -29,12 +31,19 @@ void test_print(int cnt)
 int main()
 {
 	srand(time(NULL));
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 1000; ++i)
 	{
 		test_normal(i);
 		q_result[i] = mancalaResult(q_begin[i], q_seq[i], q_size[i]);
 		test_print(i);
 	}
+	for (int i = 1000; i < 2000; ++i)
+	{
+		test_normal_moreNotOver(i);
+		q_result[i] = mancalaResult(q_begin[i], q_seq[i], q_size[i]);
+		test_print(i);
+	}
+
 	return 0;
 }
 
@@ -140,17 +149,16 @@ int mancalaResult(int begin, int seq[], int size)
 		}
 	}
 
-	// 双方棋子加入其计分洞
-	for (int i = 0; i < 6; i++)
+	if (isEnd(num) == 1)
 	{
-		num[0][6] += num[0][i];
-		num[1][6] += num[1][i];
-		num[0][i] = 0;
-		num[1][i] = 0;
-	}
-
-	if (isEnd(num))
-	{
+		// 双方棋子加入其计分洞
+		for (int i = 0; i < 6; i++)
+		{
+			num[0][6] += num[0][i];
+			num[1][6] += num[1][i];
+			num[0][i] = 0;
+			num[1][i] = 0;
+		}
 		return 15000 + num[begin - 1][6] - num[(begin - 1) ^ 1][6];
 	}
 	else
@@ -239,6 +247,29 @@ int test_normal(int cnt)
 	int size = 0;
 	q_begin[cnt] = player + 1;
 	while (!isEnd(num))
+	{
+		int hole = getHole(player, num);
+		q_seq[cnt][q_size[cnt]++] = (player + 1) * 10 + hole + 1;
+		player = step(player, hole, num);
+	}
+	return 0;
+}
+
+int test_normal_moreNotOver(int cnt)
+{
+	int player = rand() % 2;
+	int num[2][7];
+	for (int i = 0; i < 6; ++i)
+	{
+		num[0][i] = 4;
+		num[1][i] = 4;
+	}
+	num[0][6] = 0;
+	num[1][6] = 0;
+	int seq[100];
+	int size = 0;
+	q_begin[cnt] = player + 1;
+	for (int i = 0; i < 10; i++)
 	{
 		int hole = getHole(player, num);
 		q_seq[cnt][q_size[cnt]++] = (player + 1) * 10 + hole + 1;
