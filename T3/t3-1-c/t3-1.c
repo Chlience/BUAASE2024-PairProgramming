@@ -23,7 +23,7 @@ int mancalaBoard(int flag, int seq[], int size, int ans[])
     chessboard[1][6] = 0;
     flag -= 1;
 
-    int tmpFlag = flag;
+    int tmpFlag = seq[0] / 10 - 1;
     // 运行
     for (int i = 0; i < size; i++)
     {
@@ -236,7 +236,7 @@ int mancalaBoard(int flag, int seq[], int size, int ans[])
             ans[cnt_ans] = chessboard[1][cnt_chessBoard];
             cnt_ans++;
         }
-        ans[14] = tmpFlag;
+        ans[14] = tmpFlag + 1;
 
         return 0;
     }
@@ -276,11 +276,14 @@ bool isEnd(int chessboard[2][7])
 
 int main()
 {
-    int array[100] = {22, 11, 23, 16, 21, 12, 13, 21, 11, 22, 14, 25, 15, 22, 16, 22};
+    int array[100] = {13, 16, 22, 21, 11, 26, 11, 25, 11,
+                      26, 24, 13, 16, 11, 26, 23, 11, 26,
+                      25, 26, 24, 14, 24, 16, 13, 25, 26,
+                      22, 15, 25};
     int ans[15];
-    mancalaBoard(2, array, 16, ans);
+    mancalaBoard(1, array, 30, ans);
     for (int i = 0; i < 15; i++)
-        printf("ans = %d ", ans[i]);
+        printf("%d ", ans[i]);
     printf("\n");
     return 0;
 }
