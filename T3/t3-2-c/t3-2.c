@@ -52,7 +52,7 @@ int dfs(int dep, int person)
         }
         return ans;
     }
-    if (dep == 9)
+    if (dep == 8)
     {
         int ans = 0;
         // for (int i = 0; i < 7; ++i)
