@@ -1,4 +1,4 @@
-// #include <emscripten.h>
+#include <emscripten.h>
 #include <time.h>
 #include <stdio.h>
 #include <string.h>
@@ -8,6 +8,7 @@
 int chessboard[2][7]; // 0-5代表己方棋盘，6是计分板
 int dfs_choice;
 int dfs_score;
+int dfs_cnt;
 int category_choice;
 
 bool isBegin();
@@ -16,7 +17,7 @@ int dfs(int dep, int beginPerson);
 int step(int, int, int[][7]);
 int returnByStrategy(int beginPerson);
 
-// EMSCRIPTEN_KEEPALIVE
+EMSCRIPTEN_KEEPALIVE
 int mancalaOperator(int flag, int status[]) {
     for (int j = 0; j < 7; j++) {
         chessboard[0][j] = status[j];
@@ -27,14 +28,21 @@ int mancalaOperator(int flag, int status[]) {
 
     dfs_choice = -1;
     dfs_score = dfs(0, flag - 1);
-    printf("%d %d\n", dfs_choice, dfs_score);
+    // printf("%d %d\n", dfs_choice, dfs_score);
+    if (dfs_choice != -1) {
+        return 10 * flag + dfs_choice + 1;
+    }
 
-    // category_choice = returnByStrategy(flag - 1);
-    // printf("%d %d\n", category_choice, dfs_choice);
-    return 10 * flag + dfs_choice + 1;
+    category_choice = returnByStrategy(flag - 1);
+    return 10 * flag + category_choice + 1;
 }
 
 int dfs(int dep, int person) {
+    ++ dfs_cnt;
+    if (dfs_cnt > 10000000) {
+        dfs_choice = - 1;
+        return 0;
+    }
     if (isEnd()) {
         int ans = 0;
         for (int i = 0; i < 7; ++i) {
@@ -74,7 +82,7 @@ int step(int player, int hole, int num[][7]) {
     int curPlayer = player;
     int curHole = hole;
     while (curNum > 0) {
-        ++curHole;
+        ++ curHole;
 
         if (curHole < 6) {
             ++num[curPlayer][curHole];
@@ -165,11 +173,58 @@ int returnByStrategy(int person) {
     if (isBegin()) {
         return 2;
     }
+
+    // 尽可能选择可以得到额外回合的洞
+
     category_choice = -1;
     int cnt = dfs_hole(0, person);
     if (category_choice != -1) {
         return category_choice;
     }
+
+    // 提防对方的取子
+
+    for (int i = 0; i < 4; ++ i) { // 后面两个洞不太重要
+        if (chessboard[person][i] == 0) continue;
+        if (chessboard[person ^ 1][5 - i] != 0) {
+            continue;
+        }
+        if (chessboard[person][i] > 6) {
+            return i;
+        }
+    }
+
+    // 尽可能的取子
+
+    int tmp_chessboard[2][7];
+    memcpy(tmp_chessboard, chessboard, sizeof(chessboard));
+    int max_ans = 2;
+    for (int i = 0; i < 6; ++ i) {
+        if (chessboard[person][i] == 0) {
+            continue;
+        }
+        int pre_ans = chessboard[person][6];
+        step(person, i, chessboard);
+        int ans = chessboard[person][6] - pre_ans;
+        if (ans > max_ans) {
+            max_ans = ans;
+            category_choice = i;
+        }
+        memcpy(chessboard, tmp_chessboard, sizeof(chessboard));
+    }
+
+    if (category_choice != -1) {
+        return category_choice;
+    }
+
+    // 清空最右侧棋洞
+
+    if (chessboard[person][5] != 0) {
+        return 5;
+    }
+
+    // 随机策略
+
     do {
         category_choice = rand() % 6;
     } while(chessboard[person][category_choice] == 0);
@@ -177,7 +232,8 @@ int returnByStrategy(int person) {
 }
 
 int main() {
-    int array[14] = {0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 0, 4, 0, 1};
-    mancalaOperator(1, array);
+    int array[14] = {4, 4, 4, 4, 4, 4, 0, 4, 4, 4, 4, 4, 4, 0};
+    int ret = mancalaOperator(1, array);
+    // printf("%d\n", ret);
     return 0;
 }
